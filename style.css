@@ -1,0 +1,126 @@
+body {
+    background-color: #1a1a2e;
+    color: #e8e0d0;
+    font-family: Georgia, serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    margin: 0;
+}
+
+h1, h2 {
+    color: #c9a227;
+    text-align: center;
+}
+
+#book-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+    max-width: 700px;
+}
+
+.tab {
+    background-color: #2d1b2e;
+    color: #e8e0d0;
+    border: 2px solid #c9a227;
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background-color: #c9a227;
+    color: #1a1a2e;
+}
+
+#book-panel {
+    width: 600px;
+    max-width: 92vw;
+}
+
+#progress-bar {
+    background-color: #2d1b2e;
+    border: 2px solid #c9a227;
+    border-radius: 10px;
+    height: 22px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    background-color: #c9a227;
+    height: 100%;
+    width: 0%;
+    transition: width 0.4s;
+}
+
+#progress-text {
+    text-align: center;
+    color: #a89a7a;
+}
+
+#log-form {
+    display: flex;
+    gap: 8px;
+    margin: 20px 0;
+}
+
+#log-form input {
+    background-color: #2d1b2e;
+    color: #e8e0d0;
+    border: 2px solid #c9a227;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: Georgia, serif;
+    font-size: 15px;
+}
+
+#entry-words {
+    flex-grow: 1;
+}
+
+#log-btn {
+    background-color: #c9a227;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: Georgia, serif;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+#entry-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#entry-list li {
+    background-color: #2d1b2e;
+    border: 2px solid #c9a227;
+    border-radius: 10px;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#entry-list strong {
+    color: #c9a227;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    color: #b76e79;
+    cursor: pointer;
+    font-size: 14px;
+}

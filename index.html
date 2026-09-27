@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearthlight Word Count</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Hearthlight Word Count</h1>
+    <div id="book-tabs"></div>
+    <div id="book-panel">
+        <h2 id="book-title"></h2>
+        <div id="progress-wrap">
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+            <p id="progress-text"></p>
+        </div>
+        <div id="log-form">
+            <input type="date" id="entry-date">
+            <input type="number" id="entry-words" placeholder="Words written" min="1">
+            <button id="log-btn">Log Words</button>
+        </div>
+        <ul id="entry-list"></ul>
+    </div>
+
+    <script>
+        const seedBooks = [
+            { title: 'The Missing Familiar', target: 85000, entries: [{ date: '2026-09-20', words: 81700 }] },
+            { title: 'Midsummer Blooms', target: 80000, entries: [] },
+            { title: 'The Dragon at Eldergrove Harbor', target: 80000, entries: [] },
+            { title: 'The Enchanted Hearth Gathering', target: 80000, entries: [] },
+            { title: 'The Moon-Swapped Prince', target: 80000, entries: [] },
+            { title: "Pudding's Three Days", target: 20000, entries: [] },
+            { title: 'The Hearthlight Feast', target: 20000, entries: [] }
+        ];
+
+        let books;
+        let activeBook = 0;
+        const saved = localStorage.getItem('hearthlightWords');
+        if (saved) {
+            const data = JSON.parse(saved);
+            books = data.books;
+            activeBook = data.activeBook;
+        } else {
+            books = seedBooks;
+            saveBooks();
+        }
+
+        function saveBooks() {
+            localStorage.setItem('hearthlightWords', JSON.stringify({ books: books, activeBook: activeBook }));
+        }
+
+        function currentBook() {
+            return books[activeBook];
+        }
+
+        function bookTotal(book) {
+            return book.entries.reduce(function(sum, entry) { return sum + entry.words; }, 0);
+        }
+
+        function todayISO() {
+            const d = new Date();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return d.getFullYear() + '-' + m + '-' + day;
+        }
+
+        function formatDate(iso) {
+            const d = new Date(iso + 'T00:00:00');
+            return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+
+        function renderTabs() {
+            const tabs = document.getElementById('book-tabs');
+            tabs.innerHTML = '';
+            books.forEach(function(book, index) {
+                const tab = document.createElement('button');
+                tab.textContent = book.title;
+                tab.className = 'tab' + (index === activeBook ? ' active' : '');
+                tab.addEventListener('click', function() {
+                    activeBook = index;
+                    saveBooks();
+                    renderAll();
+                });
+                tabs.appendChild(tab);
+            });
+        }
+
+        function renderEntries() {
+            const list = document.getElementById('entry-list');
+            list.innerHTML = '';
+            const sorted = currentBook().entries.slice().sort(function(a, b) {
+                return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0);
+            });
+            sorted.forEach(function(entry) {
+                const li = document.createElement('li');
+                li.innerHTML = '<span>' + formatDate(entry.date) + '</span> <strong>+' +
+                    entry.words.toLocaleString() + '</strong> ';
+                const btn = document.createElement('button');
+                btn.textContent = '✕';
+                btn.className = 'remove-btn';
+                btn.addEventListener('click', function() {
+                    const i = currentBook().entries.indexOf(entry);
+                    currentBook().entries.splice(i, 1);
+                    saveBooks();
+                    renderAll();
+                });
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+        }
+
+        function renderAll() {
+            renderTabs();
+            const book = currentBook();
+            document.getElementById('book-title').textContent = book.title;
+            const total = bookTotal(book);
+            const pct = Math.min(100, Math.round(total / book.target * 100));
+            document.getElementById('progress-fill').style.width = pct + '%';
+            document.getElementById('progress-text').textContent =
+                total.toLocaleString() + ' / ' + book.target.toLocaleString() + ' words (' + pct + '%)';
+            document.getElementById('entry-date').value = todayISO();
+            renderEntries();
+        }
+
+        document.getElementById('log-btn').addEventListener('click', function() {
+            const date = document.getElementById('entry-date').value || todayISO();
+            const words = parseInt(document.getElementById('entry-words').value, 10);
+            if (!words || words <= 0) return;
+            currentBook().entries.push({ date: date, words: words });
+            document.getElementById('entry-words').value = '';
+            saveBooks();
+            renderAll();
+        });
+
+        renderAll();
+    </script>
+</body>
+</html>
