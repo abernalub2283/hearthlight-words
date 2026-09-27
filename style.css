@@ -124,3 +124,7 @@ h1, h2 {
     cursor: pointer;
     font-size: 14px;
 }
+
+.tab.add-tab {
+    border-style: dashed;
+}
